@@ -1621,6 +1621,9 @@ DECIMAL
 : FI? F@ INT . ;
 : FI@ ( -n) F@ INT ;
 
+: FPOW ( fl1 fl2-fl3) FSWAP FLOG10
+  F* FEXP10 ;
+
 : FIPOW ( fl1 n-fl2) >R FDUP
   FDUP R> 1 DO F* FOVER
   LOOP FDROP FSWAP
