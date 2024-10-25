@@ -135,7 +135,7 @@ F*C - This word requires only one float parameter. It keeps the result from a pr
       result in FR0. It does not transfer this value to the parameter stack.
 
 F/C - This word requires only one float parameter. It keeps the result from a prior float operation in FR0, transfers a FP
-      number from theh parameter stack to FR1, and runs a FP division operation on these arguments, placing the result in
+      number from the parameter stack to FR1, and runs a FP division operation on these arguments, placing the result in
       FR0. It does not transfer this value to the parameter stack.
 
 F/CS - This word requires only one float parameter. It keeps the result from a prior float operation (which starts in FR0),
