@@ -38,8 +38,8 @@ stack and the Atari's floating-point registers, FR0 and FR1. Even though Turbo B
 point package in ROM, it still uses these registers for all float operations. So, I created a set of words that instead of
 returning float results back to the parameter stack, keeps them in a float register, and if need be, loads a second float
 argument from the parameter stack into a second float register, allowing the next float operation to "continue" with those
-arguments. So, I suffixed these words with "C" for "continue." They are F+C, F-C, F*C, F/C, FSQRC, FSINC, FCOSC, FATNC, and
-FTANC. I describe these words below. To make them easier to talk about, I've called them "C" words.
+arguments. So, I suffixed these words with "C" for "continue." They are F+C, F-C, F*C, F/C, FSQRC, SQRTC, FSINC, FCOSC,
+and ATNC. I describe these words below. To make them easier to talk about, I've called them "C" words.
 
 I also created a couple words that "swap and continue," for subtraction and division, since the ordering of the arguments in
 the float registers is important, and you may need to switch them around. These words are F-CS, and F/CS (for "continue-
@@ -169,7 +169,7 @@ RAD - This word takes no parameters. Like in Basic, it puts trigonometric functi
 
 ATN - Takes one FP parameter. Implements Turbo Basic's ATN() function (arctangent).
 
-ATNC - This word does not take any parameter. It keeps the result from a prior float operation in FR0, and computes its
+ATNC - This word does not take any parameters. It keeps the result from a prior float operation in FR0, and computes its
        arctangent. It does not transfer this value to the parameter stack.
 
 FABS - Takes one FP parameter. This is not an implementation from Turbo Basic. I wrote it up, but it is equivalent to
