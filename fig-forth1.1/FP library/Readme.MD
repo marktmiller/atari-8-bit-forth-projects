@@ -190,8 +190,8 @@ FGETEXP - Takes one FP parameter. It leaves the FP parameter on the stack, but p
 
 TAN - Takes one FP parameter. It computes the tangent of an angle.
 
-FI? - Takes the address of a FP value. It's the FP equivalent of the ? word. It copies the float value at the address, 
-      converts that to an integer, and prints it on the terminal.
+FI? - Takes the address of a FP value. It copies the float value at the address to the parameter stack, converts that to
+      an integer, and prints it on the terminal.
 
 FI@ - Takes the address of a FP value. It copies the float value at the address to the parameter stack, and converts that
       to an integer.
