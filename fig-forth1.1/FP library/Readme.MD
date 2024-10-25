@@ -135,8 +135,8 @@ F*C - This word requires only one float parameter. It keeps the result from a pr
       result in FR0. It does not transfer this value to the parameter stack.
 
 F/C - This word requires only one float parameter. It keeps the result from a prior float operation in FR0, transfers a FP
-      number from the parameter stack to FR1, and runs a FP division operation on these arguments, placing the result in
-      FR0. It does not transfer this value to the parameter stack.
+      number from the parameter stack to FR1, and runs a FP division operation on these arguments (FR0 / FR1), placing
+      the result in FR0. It does not transfer this value to the parameter stack.
 
 F/CS - This word requires only one float parameter. It keeps the result from a prior float operation (which starts in FR0),
        but transfers it to FR1, then copies a float value from the parameter stack into FR0, and then runs a FP division
@@ -204,12 +204,13 @@ FIPOW - Takes a FP parameter as its first parameter, and a single-precision inte
 
 FARRAY - This is sort of like Basic's numeric arrays. It sets up a FP array structure where you can set the size of the
          array at initialization, and then you can store and retrieve float values by integer index values.
-         For example:
-                      100 FARRAY MYFLOATS ok
-                      FP 5.5 3 MYFLOATS F! ok
-                      3 MYFLOATS F? 5.5 ok
+         For example, here, I create an array of 100 FP elements, I store 5.5 in the 4th cell (arrays are 0-based), and
+         then retrieve it, and print it out:
+         100 FARRAY MYFLOATS ok
+         FP 5.5 3 MYFLOATS F! ok
+         3 MYFLOATS F? 5.5 ok
 
-FNEG - Takes one FP parameter. It toggles a FP number's sign bit. If the number comes in negative, it comes out positive,
+FNEG - Takes one FP parameter. It toggles the number's sign bit. If the number comes in negative, it comes out positive,
        and vice-versa.
 
 FROT - Does the integer equivalent of a ROT operation. It takes the third FP value down on the parameter stack, and brings
