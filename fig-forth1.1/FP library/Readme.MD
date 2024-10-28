@@ -184,9 +184,9 @@ CREATE - I've had trouble understanding how to use the CREATE word that comes wi
 
 FGETEXP - Takes one FP parameter. It leaves the FP parameter on the stack, but pushes onto the stack the float's
           "exponent vitals," as separate integer values (from higher to lower in the stack):
-          A flag to indicate that the value is between 0 and 1, or 0 and -1 (1 for "true", 0 for "false"),
-          its "negative" flag (1 for "true", 0 for "false"),
-          Its "exponent" value.
+          A flag to indicate that the value is between 1.0 and 0, or 0 and -1.0 (1 for "true", 0 for "false").
+          A flag to indicate if the value is negative (1 for "true", 0 for "false"),
+          Its "exponent" value, taken from the first byte of the float number.
 
 TAN - Takes one FP parameter. It computes the tangent of an angle.
 
@@ -194,7 +194,7 @@ FI? - Takes the address of a FP value. It copies the float value at the address 
       an integer, and prints it on the terminal.
 
 FI@ - Takes the address of a FP value. It copies the float value at the address to the parameter stack, and converts that
-      to an integer.
+      to a single-precision integer.
 
 FPOW - Takes two FP parameters. It does a x^y operation, where both x and y are float values. Note that it uses APX Forth's
        FEXP10 word to compute this, since I don't have an equivalent (yet) from the Turbo Basic library.
@@ -202,8 +202,8 @@ FPOW - Takes two FP parameters. It does a x^y operation, where both x and y are 
 FIPOW - Takes a FP parameter as its first parameter, and a single-precision integer as its second parameter. It does a
         x^y operation, where x is a float value, and y is an integer.
 
-FARRAY - This is sort of like Basic's numeric arrays. It sets up a FP array structure where you can set the size of the
-         array at initialization, and then you can store and retrieve float values by integer index values.
+FARRAY - This is sort of like Basic's numeric arrays. It sets up a FP array structure where you can set the number of cells
+         in the array at initialization, and then you can store and retrieve float values by integer index values.
          For example, here, I create an array of 100 FP elements, I store 5.5 in the 4th cell (arrays are 0-based), and
          then retrieve it, and print it out:
          100 FARRAY MYFLOATS ok
