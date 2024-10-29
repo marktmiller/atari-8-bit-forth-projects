@@ -3,6 +3,8 @@
 
 : CREATE <BUILDS DOES> ;
 
+: NOT 0 = ;
+
 HEX
 CODE FGETEXP 0 # LDA, N STA,
 N 1 + STA, 4 ,X LDA,
