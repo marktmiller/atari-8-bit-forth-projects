@@ -148,9 +148,7 @@ These are words I wrote up. They do not have equivalents in Turbo Basic.
 
 ## Examples
 
-This FP library works a lot like the one that comes with APX Forth.
-
-To use the normal arithmetic words, push the required number of FP values on the parameter stack, and then do the operation of your choice.
+You use this FP library a lot like you would the one that comes with APX Forth. Push the required number of FP values on the parameter stack, and then do the operation of your choice.
 
 `FP 5.25 FP 6.0 F* F. 31.5 ok`
 
