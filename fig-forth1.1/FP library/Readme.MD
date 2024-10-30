@@ -83,19 +83,21 @@ error to the caller, but don't quote me on that.
 
 ## The floating-point functions
 
+In the "number of parameters" column, assume these are floating-point parameters, unless otherwise noted.
+
 | Word | Number of parameters | Description |
 | ---- | -------------------- | ----------- |
-| TRND | 0 | TB's RND() function |
+| TRND | 0 | TB's RND() function. Pushes FP random numbers on the stack. |
 | F*   | 2 | Does FP multiplication |
 | F/   | 2 | Does FP division |
 | F+   | 2 | Does FP addition |
 | F-   | 2 | Does FP subtraction |
-| FEXP | 1 | TB's EXP() function, computing e<sup>x</sup> |
-| FLOG10 | 1 | TB's CLOG() function, computing a base-10 logarithm |
-| FLOG | 1 | TB's LOG() function, computing a natural logarithm (base-e) |
-| INT | 1 | TB's INT() function, including its rounding logic. Converts a float value to a single-precision integer. |
-| F= | 2 | Tests for equality |
-| F<> | 2 | Tests for inequality |
+| FEXP | 1 | TB's EXP() function, computes e<sup>x</sup> |
+| FLOG10 | 1 | TB's CLOG() function, computes a base-10 logarithm |
+| FLOG | 1 | TB's LOG() function, computes a natural logarithm (base-e) |
+| INT | 1 | TB's INT() function. Implements INT()'s rounding logic. Converts a float value to a single-precision integer. |
+| F= | 2 | Tests for a = b |
+| F<> | 2 | Tests for a not equal b |
 | F< | 2 | Tests for fl1 < fl2 |
 | FGT | 2 | Tests for fl1 > fl2 |
 | F<= | 2 | Tests for fl1 <= fl2 |
@@ -107,7 +109,7 @@ error to the caller, but don't quote me on that.
 | F*C | 1 | This keeps the result from a prior float operation in FR0, transfers one FP number from the parameter stack to FR1, and runs a FP multiplication operation on these arguments, placing the result in FR0. It does not transfer this value to the parameter stack. |
 | F/C | 1 | This keeps the result from a prior float operation in FR0, transfers one FP number from the parameter stack to FR1, and runs a FP division operation on these arguments (FR0 / FR1), placing the result in FR0. It does not transfer this value to the parameter stack. |
 |  F/CS | 1 | This keeps the result from a prior float operation (which starts in FR0), but transfers it to FR1, then copies a float value from the parameter stack into FR0, and then runs a FP division operation (FR0 / FR1), which places the result in FR0. It does not transfer this value to the parameter stack. |
-| FSQR | 1 | Squares the top FP number on the parameter stack (x<sup>2</sup>).
+| FSQR | 1 | Squares the top FP number on the parameter stack (computes x<sup>2</sup>).
 | FSQRC | 0 | This keeps the result from a prior float operation in FR0, and squares it. It does not transfer this value to the parameter stack. |
 |  SQRT | 1 | TB's SQR() function (square root) |
 | SQRTC | 0 | This keeps the result from a prior float operation in FR0, and computes its square root. It does not transfer this value to the parameter stack. |
@@ -116,7 +118,7 @@ error to the caller, but don't quote me on that.
 | COS | 1 | TB's COS() function |
 | COSC | 0 | This keeps the result from a prior float operation in FR0, and computes its cosine. It does not transfer this value to the parameter stack. |
 | DEG | 0 | Like in Basic, this puts trigonometric functions in "degree mode." (Default is radians.) |
-| RAD | 0 | Like in Basic, it puts trigonometric functions in "radian mode." (This is the default.) |
+| RAD | 0 | Like in Basic, this puts trigonometric functions in "radian mode." (This is the default.) |
 | ATN | 1 | TB's ATN() function (arctangent) |
 | ATNC | 0 | This keeps the result from a prior float operation in FR0, and computes its arctangent. It does not transfer this value to the parameter stack. |
 | FABS | 1 | This is not an implementation from Turbo Basic. I wrote it up, but it is equivalent to Basic's ABS() function. It produces the absolute value of the given FP value. |
@@ -138,15 +140,28 @@ These are words I wrote up. They do not have equivalents in Turbo Basic.
 | FPOW | 2 | This does a x<sup>y</sup> operation, where both x and y are float values. Note that it uses APX Forth's FEXP10 word to compute this, since I don't have an equivalent (yet) from the Turbo Basic library. |
 | FIPOW | 1 (float), 1 (integer) | Takes a FP parameter as its first parameter, and a single-precision integer as its second parameter. It does a x<sup>y</sup> operation, where x is a float value, and y is an integer. |
 | FARRAY | 1 | This is sort of like Basic's numeric arrays. It sets up a FP array structure where you can set the number of cells in the array at initialization, and then you can store and retrieve float values by integer index values. |
-| | | For example, here, I create an array of 100 FP elements, I store 5.5 in the 4th cell (arrays are 0-based), and then retrieve it, and print it out: |
-| | | `100 FARRAY MYFLOATS ok` |
-| | | `FP 5.5 3 MYFLOATS F! ok` |
-| | | `3 MYFLOATS F? 5.5 ok` |
 | FNEG | 1 | This toggles a FP number's sign bit. If the number comes in negative, it comes out positive, and vice-versa. |
 | FROT | 3 | Does the integer equivalent of a ROT operation. It takes the third FP value down on the parameter stack, and brings it to the top of the stack. |
 | F, | 1 | This pops the float value off the stack, and puts it into the dictionary. This is useful for situations such as: CREATE FPLIST FP 5.5 F, FP 0.1 F, ... |
 | LB | 1 (integer) | Takes one single-precision integer parameter. Pops the value off the stack, and replaces it with its low-byte value. |
 | HB | 1 (integer) | Takes one single-precision integer parameter. Pops the value off the stack, and replaces it with its high-byte value. |
+
+## Examples
+
+This FP library works a lot like the one that comes with APX Forth.
+
+To use the normal arithmetic words, push the required number of FP values on the parameter stack, and then do the operation of your choice.
+
+`FP 5.25 FP 6.0 F* F. 31.5 ok`
+
+### FP arrays
+
+Here, I create an array of 100 FP elements. I store 5.5 in the 4th cell (arrays are 0-based), then retrieve it, and print it out:
+```
+100 FARRAY MYFLOATS ok
+FP 5.5 3 MYFLOATS F! ok
+3 MYFLOATS F? 5.5 ok
+```
 
 I've created some abbreviated aliases for some integer and FP constructs that come with APX Forth, since they take up a lot
 of space when writing screens:
