@@ -128,10 +128,7 @@ These are words I wrote up. They do not have equivalents in Turbo Basic.
 | Word | Number of parameters | Description |
 | ---- | -------------------- | ----------- |
 | CREATE | 0 | I've had trouble understanding how to use the CREATE word that comes with APX Forth. So, I made this version. I've had no problems with it. |
-| FGETEXP | 1 | This leaves the FP parameter on the stack, but pushes onto the stack the float's "exponent vitals," as separate integer values (from higher to lower in the stack):
-1. A flag to indicate that the value is between 1.0 and 0, or 0 and -1.0 (1 for "true", 0 for "false").
-2. A flag to indicate if the value is negative (1 for "true", 0 for "false"),
-3. Its "exponent" value, taken from the first byte of the float number. |
+| FGETEXP | 1 | This leaves the FP parameter on the stack, but pushes onto the stack the float's "exponent vitals," as separate integer values (from higher to lower in the stack): 1. A flag to indicate that the value is between 1.0 and 0, or 0 and -1.0 (1 for "true", 0 for "false"). 2. A flag to indicate if the value is negative (1 for "true", 0 for "false"), 3. Its "exponent" value, taken from the first byte of the float number. |
 | TAN | 1 | Computes the tangent of an angle. |
 | FI? | 1 (address) | Takes the address of a FP value. It copies the float value at the address to the parameter stack, converts that to an integer, and prints it on the terminal. |
 | FI@ | 1 (address) | Takes the address of a FP value. It copies the float value at the address to the parameter stack, and converts that to a single-precision integer. |
