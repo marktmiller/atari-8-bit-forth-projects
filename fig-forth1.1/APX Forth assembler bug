@@ -28,6 +28,6 @@ Now you can load the assembler (39 LOAD).
 
 Just a note: I noticed this bug while writing my port of the Turbo Basic floating-point library for Forth (listed under "FP
 library" in this repository). I didn't know how to fix it at the time. So, I used a work-around of transferring the value
-in the Accumulator to N, and then loading N into the X or Y register, like so: `N STA, N LDX,` or `N STA, N LDY,`.
+in the Accumulator to N, and then loading N into the X or Y register, like so: N STA, N LDX, or N STA, N LDY,.
 
 Making the above fix will not cause a problem with the FP library, but it's unnecessary for making the library work.
