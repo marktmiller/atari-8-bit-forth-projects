@@ -1,6 +1,6 @@
 # Port of Turbo Basic math package for APX Forth/Fig-Forth 1.1
 
-Using dmsc's MADS disassembly of Turbo Basic's math package [https://github.com/dmsc/turbo-dis](Turbo Basic XL v1.5 disassembly) as my source, I ported all of
+Using dmsc's MADS disassembly of Turbo Basic's math package [Turbo Basic XL v1.5 disassembly](https://github.com/dmsc/turbo-dis) as my source, I ported all of
 its floating-point functions to the Forth assembler, so that they can be used with Forth code, making it much faster than
 using the floating-point package supplied with APX Forth.
 
