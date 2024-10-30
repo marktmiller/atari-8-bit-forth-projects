@@ -128,18 +128,20 @@ These are words I wrote up. They do not have equivalents in Turbo Basic.
 | Word | Number of parameters | Description |
 | ---- | -------------------- | ----------- |
 | CREATE | 0 | I've had trouble understanding how to use the CREATE word that comes with APX Forth. So, I made this version. I've had no problems with it. |
-| FGETEXP | 1 | This leaves the FP parameter on the stack, but pushes onto the stack the float's "exponent vitals," as separate integer values (from higher to lower in the stack): 1. A flag to indicate that the value is between 1.0 and 0, or 0 and -1.0 (1 for "true", 0 for "false"). 2. A flag to indicate if the value is negative (1 for "true", 0 for "false"), 3. Its "exponent" value, taken from the first byte of the float number. |
+| FGETEXP | 1 | This leaves the FP parameter on the stack, but pushes onto the stack the float's "exponent vitals," as separate integer values (from higher to lower in the stack): |
+| | | 1. A flag to indicate that the value is between 1.0 and 0, or 0 and -1.0 (1 for "true", 0 for "false"). |
+| | | 2. A flag to indicate if the value is negative (1 for "true", 0 for "false"), |
+| | | 3. Its "exponent" value, taken from the first byte of the float number. |
 | TAN | 1 | Computes the tangent of an angle. |
 | FI? | 1 (address) | Takes the address of a FP value. It copies the float value at the address to the parameter stack, converts that to an integer, and prints it on the terminal. |
 | FI@ | 1 (address) | Takes the address of a FP value. It copies the float value at the address to the parameter stack, and converts that to a single-precision integer. |
-| FPOW | 2 | This does a x<sup>y</sup> operation, where both x and y are float values. Note that it uses APX Forth's
-       FEXP10 word to compute this, since I don't have an equivalent (yet) from the Turbo Basic library. |
+| FPOW | 2 | This does a x<sup>y</sup> operation, where both x and y are float values. Note that it uses APX Forth's FEXP10 word to compute this, since I don't have an equivalent (yet) from the Turbo Basic library. |
 | FIPOW | 1 (float), 1 (integer) | Takes a FP parameter as its first parameter, and a single-precision integer as its second parameter. It does a x<sup>y</sup> operation, where x is a float value, and y is an integer. |
-| FARRAY | 1 | This is sort of like Basic's numeric arrays. It sets up a FP array structure where you can set the number of cells in the array at initialization, and then you can store and retrieve float values by integer index values.
-For example, here, I create an array of 100 FP elements, I store 5.5 in the 4th cell (arrays are 0-based), and then retrieve it, and print it out:
-`100 FARRAY MYFLOATS ok`
-`FP 5.5 3 MYFLOATS F! ok`
-`3 MYFLOATS F? 5.5 ok` |
+| FARRAY | 1 | This is sort of like Basic's numeric arrays. It sets up a FP array structure where you can set the number of cells in the array at initialization, and then you can store and retrieve float values by integer index values. |
+| | | For example, here, I create an array of 100 FP elements, I store 5.5 in the 4th cell (arrays are 0-based), and then retrieve it, and print it out: |
+| | | `100 FARRAY MYFLOATS ok` |
+| | | `FP 5.5 3 MYFLOATS F! ok` |
+| | | `3 MYFLOATS F? 5.5 ok` |
 | FNEG | 1 | This toggles a FP number's sign bit. If the number comes in negative, it comes out positive, and vice-versa. |
 | FROT | 3 | Does the integer equivalent of a ROT operation. It takes the third FP value down on the parameter stack, and brings it to the top of the stack. |
 | F, | 1 | This pops the float value off the stack, and puts it into the dictionary. This is useful for situations such as: CREATE FPLIST FP 5.5 F, FP 0.1 F, ... |
