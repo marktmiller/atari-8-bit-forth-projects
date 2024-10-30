@@ -1,0 +1,27 @@
+# A bug fix for the APX Forth assembler
+
+There's a bug in the assembler that you may notice if you try to use the mnemonics TAX, or TAY,. They don't work. If you try
+to use TAX, it actually transfers the value in the Accumulator to the Y register, and if you try to use TAY, Forth will
+complain that you're using an undefined word.
+
+It looks like what happened was sort of a misprint in the Forth code for the assembler. TAX, is defined, but it's bound to
+the opcode for TAY ($A8)! Still, though, the assembler word TAY, wasn't defined.
+
+The bug wasn't just on the disk. You can see it in the manual, where the source code for the assembler is listed.
+
+It's simple to fix. This should be done after you load the editor (`27 LOAD`), but before you load the assembler:
+
+- Go to Screen 41 on your APX Forth disk (`41 LIST`).
+- Invoke the editor (`EDITOR`)
+- Replace Line 8 using the following: `8 P 78 SB SEI, A8 SB TAY, BA SB TSX,`
+- Edit Line 10 using: `10 P AA SB TAX,`
+
+That's it.
+
+Now you can load the assembler (`39 LOAD`).
+
+Just a note: I noticed this bug while writing my port of the Turbo Basic floating-point library for Forth (listed under "FP
+library" in this repository). I didn't know how to fix it at the time. So, I used a work-around of transferring the value
+in the Accumulator to N, and then loading N into the X or Y register, like so: `N STA, N LDX,` or `N STA, N LDY,`.
+
+Making the above fix will not cause a problem with the FP library, but it's unnecessary for making the library work.
