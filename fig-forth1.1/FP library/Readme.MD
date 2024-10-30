@@ -1,8 +1,8 @@
 # Port of Turbo Basic math package for APX Forth/Fig-Forth 1.1
 
-Using dmsc's MADS disassembly of Turbo Basic's math package (https://github.com/dmsc/turbo-dis) as my source, I ported all of
-its floating-point functions to the Forth assembler, so that they can be used with Forth code, making it much faster than using
-the floating-point package supplied with APX Forth.
+Using dmsc's MADS disassembly of Turbo Basic's math package [https://github.com/dmsc/turbo-dis](Turbo Basic XL v1.5 disassembly) as my source, I ported all of
+its floating-point functions to the Forth assembler, so that they can be used with Forth code, making it much faster than
+using the floating-point package supplied with APX Forth.
 
 This is not a complete replacement of APX Forth's math library. It supercedes most of the math words, but still has you using
 many of the floating-point utility functions of APX Forth.
@@ -31,7 +31,7 @@ the contents of the file "Turbo Basic floating-point port".
 In using this library, you create float values the same way you would in APX Forth's floating-point library, by either using
 the FP word for literals, or FLOAT to convert single-precision integers.
 
-# Some optimization
+## Some optimization
 
 After writing this port, I realized that it ended up imposing some overhead by cycling float values between the parameter
 stack and the Atari's floating-point registers, FR0 and FR1. Even though Turbo Basic largely doesn't use Atari's floating-
@@ -74,162 +74,87 @@ Or, you can load a single float onto the parameter stack, copy it into FR0, usin
 Forth floating-point library, standing for "float store"), then load a second float value on the parameter stack, and run
 a "C" or "CS" word.
 
-# Error logic
+## Error logic
 
 All of the error logic from Turbo Basic's math package has been implemented in this port. Though, I have not yet examined
 how it works. This would come into play with, for example, division by zero. From what I can tell, it does not trigger any
 sort of error/alert response from Forth, in error conditions. My guess is it uses the processor's "carry" flag to signal an
 error to the caller, but don't quote me on that.
 
-# The floating-point functions
+## The floating-point functions
 
-TRND - Implements the logic of Turbo Basic's RND() function. No parameters are required.
+| Word | Number of parameters | Description |
+| ---- | -------------------- | ----------- |
+| TRND | 0 | TB's RND() function |
+| F*   | 2 | Does FP multiplication |
+| F/   | 2 | Does FP division |
+| F+   | 2 | Does FP addition |
+| F-   | 2 | Does FP subtraction |
+| FEXP | 1 | TB's EXP() function, computing e<sup>x</sup> |
+| FLOG10 | 1 | TB's CLOG() function, computing a base-10 logarithm |
+| FLOG | 1 | TB's LOG() function, computing a natural logarithm (base-e) |
+| INT | 1 | TB's INT() function, including its rounding logic. Converts a float value to a single-precision integer. |
+| F= | 2 | Tests for equality |
+| F<> | 2 | Tests for inequality |
+| F< | 2 | Tests for fl1 < fl2 |
+| FGT | 2 | Tests for fl1 > fl2 |
+| F<= | 2 | Tests for fl1 <= fl2 |
+| F>= | 2 | Tests for fl1 >= fl2 |
+| FLOAT | 1 (integer) | Takes one single-precision integer parameter. Implements TB's logic for converting an integer to a float value. Supercedes the APX FLOAT word. |
+| F+C | 1 | This keeps the result from a prior float operation in FR0, transfers one FP number from the parameter stack to FR1, and runs a FP addition operation on these arguments, placing the result in FR0. It does not transfer this value to the parameter stack. |
+| F-C | 1 | This keeps the result from a prior float operation in FR0, transfers one FP number from the parameter stack to FR1, and runs a FP subtraction operation (FR0 - FR1), which places the result in FR0. It does not transfer this value to the parameter stack. |
+| F-CS | 1 | This keeps the result from a prior float operation (which starts in FR0), but transfers it to FR1, then copies one float value from the parameter stack into FR0, and then runs a FP subtraction operation (FR0 - FR1), which places the result in FR0. It does not transfer this value to the parameter stack. |
+| F*C | 1 | This keeps the result from a prior float operation in FR0, transfers one FP number from the parameter stack to FR1, and runs a FP multiplication operation on these arguments, placing the result in FR0. It does not transfer this value to the parameter stack. |
+| F/C | 1 | This keeps the result from a prior float operation in FR0, transfers one FP number from the parameter stack to FR1, and runs a FP division operation on these arguments (FR0 / FR1), placing the result in FR0. It does not transfer this value to the parameter stack. |
+|  F/CS | 1 | This keeps the result from a prior float operation (which starts in FR0), but transfers it to FR1, then copies a float value from the parameter stack into FR0, and then runs a FP division operation (FR0 / FR1), which places the result in FR0. It does not transfer this value to the parameter stack. |
+| FSQR | 1 | Squares the top FP number on the parameter stack (x<sup>2</sup>).
+| FSQRC | 0 | This keeps the result from a prior float operation in FR0, and squares it. It does not transfer this value to the parameter stack. |
+|  SQRT | 1 | TB's SQR() function (square root) |
+| SQRTC | 0 | This keeps the result from a prior float operation in FR0, and computes its square root. It does not transfer this value to the parameter stack. |
+| SIN | 1 | TB's SIN() function |
+| SINC | 0 | This keeps the result from a prior float operation in FR0, and computes its sine. It does not transfer this value to the parameter stack. |
+| COS | 1 | TB's COS() function |
+| COSC | 0 | This keeps the result from a prior float operation in FR0, and computes its cosine. It does not transfer this value to the parameter stack. |
+| DEG | 0 | Like in Basic, this puts trigonometric functions in "degree mode." (Default is radians.) |
+| RAD | 0 | Like in Basic, it puts trigonometric functions in "radian mode." (This is the default.) |
+| ATN | 1 | TB's ATN() function (arctangent) |
+| ATNC | 0 | This keeps the result from a prior float operation in FR0, and computes its arctangent. It does not transfer this value to the parameter stack. |
+| FABS | 1 | This is not an implementation from Turbo Basic. I wrote it up, but it is equivalent to Basic's ABS() function. It produces the absolute value of the given FP value. |
 
-F* - Takes two FP arguments. Does a FP multiply.
-
-F/ - Takes two FP arguments. Does a FP division.
-
-F+ - Takes two FP arguments. Does a FP addition.
-
-F- - Takes two FP arguments. Does a FP subtraction.
-
-FEXP - Takes one FP parameter. Implements the logic for Turbo Basic's EXP() function, computing e^x.
-
-FLOG10 - Takes one FP parameter. Implements the logic for Turbo Basic's CLOG() function, computing a base-10 logarithm.
-
-FLOG - Takes one FP parameter. Implements the logic for Turbo Basic's LOG() function, computing a natural logarithm
-       (base-e).
-
-INT - Takes one FP parameter. Implements Turbo Basic's INT() function, including its rounding logic. It converts a float
-      value to a single-precision integer.
-
-F= - Tests two float values for equality.
-
-F<> - Tests two float values for inequality.
-
-F< - Tests if a float value is less than a second float value.
-
-FGT - Tests if a float value is greater than a second float value.
-
-F<= - Tests if a float value is less-than or equal to a second float value.
-
-F>= - Tests if a float value is greater-than or equal to a second float value.
-
-FLOAT - Takes one single-precision integer parameter. Implements Turbo Basic's logic for converting an integer to a float
-        value, superceding the APX FLOAT word.
-
-F+C - This word requires only one float parameter. It keeps the result from a prior float operation in FR0, transfers a FP
-      number from the parameter stack to FR1, and runs a FP addition operation on these arguments, placing the result in
-      FR0. It does not transfer this value to the parameter stack.
-
-F-C - This word requires only one float parameter. It keeps the result from a prior float operation in FR0, transfers a FP
-      number from the parameter stack to FR1, and runs a FP subtraction operation (FR0 - FR1), which places the result in
-      FR0. It does not transfer this value to the parameter stack.
-
-F-CS - This word requires only one float parameter. It keeps the result from a prior float operation (which starts in FR0),
-       but transfers it to FR1, then copies a float value from the parameter stack into FR0, and then runs a FP subtraction
-       operation (FR0 - FR1), which places the result in FR0. It does not transfer this value to the parameter stack.
-
-F*C - This word requires only one float parameter. It keeps the result from a prior float operation in FR0, transfers a FP
-      number from the parameter stack to FR1, and runs a FP multiplication operation on these arguments, placing the
-      result in FR0. It does not transfer this value to the parameter stack.
-
-F/C - This word requires only one float parameter. It keeps the result from a prior float operation in FR0, transfers a FP
-      number from the parameter stack to FR1, and runs a FP division operation on these arguments (FR0 / FR1), placing
-      the result in FR0. It does not transfer this value to the parameter stack.
-
-F/CS - This word requires only one float parameter. It keeps the result from a prior float operation (which starts in FR0),
-       but transfers it to FR1, then copies a float value from the parameter stack into FR0, and then runs a FP division
-       operation (FR0 / FR1), which places the result in FR0. It does not transfer this value to the parameter stack.
-
-FSQR - Takes one FP parameter and squares it (x^2).
-
-FSQRC - This word does not take any parameters. It keeps the result from a prior float operation in FR0, and squares it. It
-        does not transfer this value to the parameter stack.
-
-SQRT - Takes one FP parameter. Implements Turbo Basic's SQR() function (square root).
-
-SQRTC - This word does not take any parameters. It keeps the result from a prior float operation in FR0, and computes its
-        square root. It does not transfer this value to the parameter stack.
-
-SIN - Takes one FP parameter. Implements Turbo Basic's SIN() function.
-
-SINC - This word does not take any parameters. It keeps the result from a prior float operation in FR0, and computes its
-       sine. It does not transfer this value to the parameter stack.
-
-COS - Takes one FP parameter. Implements Turbo Basic's COS() function.
-
-COSC - This word does not take any parameters. It keeps the result from a prior float operation in FR0, and computes its
-       cosine. It does not transfer this value to the parameter stack.
-
-DEG - This word takes no parameters. Like in Basic, it puts trigonometric functions in "degree mode." (Default is radians.)
-
-RAD - This word takes no parameters. Like in Basic, it puts trigonometric functions in "radian mode." (This is the
-      default.)
-
-ATN - Takes one FP parameter. Implements Turbo Basic's ATN() function (arctangent).
-
-ATNC - This word does not take any parameters. It keeps the result from a prior float operation in FR0, and computes its
-       arctangent. It does not transfer this value to the parameter stack.
-
-FABS - Takes one FP parameter. This is not an implementation from Turbo Basic. I wrote it up, but it is equivalent to
-       Basic's ABS() function. It produces the absolute value of the given FP value.
-
-# Other words that come with this port
+## Other words that come with this port
 
 These are words I wrote up. They do not have equivalents in Turbo Basic.
 
-CREATE - I've had trouble understanding how to use the CREATE word that comes with APX Forth. So, I made this version.
-         I've had no problems with it.
-
-FGETEXP - Takes one FP parameter. It leaves the FP parameter on the stack, but pushes onto the stack the float's
-          "exponent vitals," as separate integer values (from higher to lower in the stack):
-          A flag to indicate that the value is between 1.0 and 0, or 0 and -1.0 (1 for "true", 0 for "false").
-          A flag to indicate if the value is negative (1 for "true", 0 for "false"),
-          Its "exponent" value, taken from the first byte of the float number.
-
-TAN - Takes one FP parameter. It computes the tangent of an angle.
-
-FI? - Takes the address of a FP value. It copies the float value at the address to the parameter stack, converts that to
-      an integer, and prints it on the terminal.
-
-FI@ - Takes the address of a FP value. It copies the float value at the address to the parameter stack, and converts that
-      to a single-precision integer.
-
-FPOW - Takes two FP parameters. It does a x^y operation, where both x and y are float values. Note that it uses APX Forth's
-       FEXP10 word to compute this, since I don't have an equivalent (yet) from the Turbo Basic library.
-
-FIPOW - Takes a FP parameter as its first parameter, and a single-precision integer as its second parameter. It does a
-        x^y operation, where x is a float value, and y is an integer.
-
-FARRAY - This is sort of like Basic's numeric arrays. It sets up a FP array structure where you can set the number of cells
-         in the array at initialization, and then you can store and retrieve float values by integer index values.
-         For example, here, I create an array of 100 FP elements, I store 5.5 in the 4th cell (arrays are 0-based), and
-         then retrieve it, and print it out:
-         100 FARRAY MYFLOATS ok
-         FP 5.5 3 MYFLOATS F! ok
-         3 MYFLOATS F? 5.5 ok
-
-FNEG - Takes one FP parameter. It toggles the number's sign bit. If the number comes in negative, it comes out positive,
-       and vice-versa.
-
-FROT - Does the integer equivalent of a ROT operation. It takes the third FP value down on the parameter stack, and brings
-       it to the top of the stack.
-
-F, - Takes one FP parameter. It pops the float value off the stack, and puts it into the dictionary. This is useful for
-     situations such as: CREATE FPLIST FP 5.5 F, FP 0.1 F, ...
-
-LB - Takes one single-precision integer parameter. Pops the value off the stack, and replaces it with its low-byte value.
-
-HB - Takes one single-precision integer parameter. Pops the value off the stack, and replaces it with its high-byte value.
+| Word | Number of parameters | Description |
+| ---- | -------------------- | ----------- |
+| CREATE | 0 | I've had trouble understanding how to use the CREATE word that comes with APX Forth. So, I made this version. I've had no problems with it. |
+| FGETEXP | 1 | This leaves the FP parameter on the stack, but pushes onto the stack the float's "exponent vitals," as separate integer values (from higher to lower in the stack):
+1. A flag to indicate that the value is between 1.0 and 0, or 0 and -1.0 (1 for "true", 0 for "false").
+2. A flag to indicate if the value is negative (1 for "true", 0 for "false"),
+3. Its "exponent" value, taken from the first byte of the float number. |
+| TAN | 1 | Computes the tangent of an angle. |
+| FI? | 1 (address) | Takes the address of a FP value. It copies the float value at the address to the parameter stack, converts that to an integer, and prints it on the terminal. |
+| FI@ | 1 (address) | Takes the address of a FP value. It copies the float value at the address to the parameter stack, and converts that to a single-precision integer. |
+| FPOW | 2 | This does a x<sup>y</sup> operation, where both x and y are float values. Note that it uses APX Forth's
+       FEXP10 word to compute this, since I don't have an equivalent (yet) from the Turbo Basic library. |
+| FIPOW | 1 (float), 1 (integer) | Takes a FP parameter as its first parameter, and a single-precision integer as its second parameter. It does a x<sup>y</sup> operation, where x is a float value, and y is an integer. |
+| FARRAY | 1 | This is sort of like Basic's numeric arrays. It sets up a FP array structure where you can set the number of cells in the array at initialization, and then you can store and retrieve float values by integer index values.
+For example, here, I create an array of 100 FP elements, I store 5.5 in the 4th cell (arrays are 0-based), and then retrieve it, and print it out:
+`100 FARRAY MYFLOATS ok`
+`FP 5.5 3 MYFLOATS F! ok`
+`3 MYFLOATS F? 5.5 ok` |
+| FNEG | 1 | This toggles a FP number's sign bit. If the number comes in negative, it comes out positive, and vice-versa. |
+| FROT | 3 | Does the integer equivalent of a ROT operation. It takes the third FP value down on the parameter stack, and brings it to the top of the stack. |
+| F, | 1 | This pops the float value off the stack, and puts it into the dictionary. This is useful for situations such as: CREATE FPLIST FP 5.5 F, FP 0.1 F, ... |
+| LB | 1 (integer) | Takes one single-precision integer parameter. Pops the value off the stack, and replaces it with its low-byte value. |
+| HB | 1 (integer) | Takes one single-precision integer parameter. Pops the value off the stack, and replaces it with its high-byte value. |
 
 I've created some abbreviated aliases for some integer and FP constructs that come with APX Forth, since they take up a lot
 of space when writing screens:
 
-VAR - Same as VARIABLE.
-
-CONST - Same as CONSTANT.
-
-FVAR - Same as FVARIABLE.
-
-FCONST - Same as FCONSTANT.
+| Word | Alias for |
+| ---- | --------- |
+| VAR | VARIABLE |
+| CONST | CONSTANT |
+| FVAR | FVARIABLE |
+| FCONST | FCONSTANT |
