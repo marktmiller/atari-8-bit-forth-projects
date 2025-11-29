@@ -1,0 +1,197 @@
+( APX Forth "upgrades" for "Starting Forth")
+
+: NOT ( fl-fl) 0 = ;
+: R@ ( -n) I ;
+: 1- 1 - ;
+
+: <> ( n n - fl) = 0 = ;
+: 0<> ( n-fl) 0 = NOT ;
+: 0> ( n-fl) DUP 0= SWAP 0< OR 0 = ;
+
+: CREATE <BUILDS DOES> ;
+
+53770 @ VARIABLE RND
+: RANDOM ( -n) RND @ 31421 *
+  6972 + DUP RND ! ;
+
+: MOVE ( addr1 addr2 u -)
+  1- -1 SWAP DO SWAP DUP
+  I + C@ ROT DUP >R I + C! R>
+  -1 +LOOP 2DROP ;
+
+: M+ ( d n — d-sum) S->D D+ ;
+
+: SM/REM ( d1 n1 — n2 n3) M/ ;
+
+(FM/MOD definition using SM/REM. Adapted from forth-standard.org)
+(n2 - remainder, n3 - floored quotient)
+: FM/MOD ( d1 n1 — n2 n3)
+  DUP >R SM/REM
+  ( if remainder is not zero &)
+  ( has a different sign than divisor )
+  OVER DUP 0<> SWAP 0< R@ 0< XOR
+  AND IF 1- SWAP R> + SWAP ELSE
+  R> DROP THEN ;
+
+( Layout in N storage area:
+(   Divisor (2 bytes) N0,N1
+(   Multiplier (2 bytes) N2,N3
+(   Multiplicand (4 bytes) N4-N7
+( Push: divisor multiplier multiplicand
+( Result: Dividend
+CODE M*/ ( d n1 n2 — d) 4 # LDA,
+SETUP JSR, ( Copy 8 bytes from stack to N memory area)
+0 # LDA, 3 # LDY, ( Add 3 stack entries = 6 bytes)
+BEGIN,
+  DEX, DEX,
+  0 ,X STA, 1 ,X STA,
+  DEY,
+0= END,
+( Multiply)
+16 # LDY,
+( Manipulate stack
+BEGIN,
+  4 ,X ASL, ( Shift)
+  5 ,X ROL, ( multiplicand)
+  2 ,X ROL, ( left.)
+  3 ,X ROL, ( ***)
+  0 ,X ROL, ( Rotate-left)
+  1 ,X ROL, ( high-word of product.)
+  N 2 + ASL,  ( Shift multiplier)
+  N 3 + ROL, ( left - in N)
+  IFCS,           ( If high-bit went to Carry)
+    CLC, ( Add from N to stack)
+    4 ,X LDA, N 6 + ADC, 4 ,X STA,
+    5 ,X LDA, N 7 + ADC, 5 ,X STA,
+    2 ,X LDA, N 4 + ADC, 2 ,X STA,
+    3 ,X LDA, N 5 + ADC, 3 ,X STA,
+    IFCS,         ( If addition exceeds multiplicand,)
+      0 ,X INC,  ( Increment high-word of product)
+    ENDIF,
+  ENDIF,
+  DEY,
+0= END,
+( Divide)
+N 2 + STY,
+32 # LDY,
+BEGIN,
+  4 ,X ASL,
+  5 ,X ROL, 2 ,X ROL, 3 ,X ROL,
+  0 ,X ROL, 1 ,X ROL,
+  1 ,X LDA,
+  N 1 + CMP,
+  IFEQ,
+    0 ,X LDA,
+    N CMP,
+  ENDIF,
+  IFCC,
+    1 # LDA, N 2 + STA,
+  ENDIF,
+  N 2 + LDA,
+  IFEQ,
+    0 ,X LDA,
+    SEC,
+    N SBC, 0 ,X STA,
+    1 ,X LDA,
+    N 1 + SBC, 1 ,X STA,
+    CLC,
+    4 ,X INC,
+  ENDIF,
+  DEY,
+  0 # LDA, N 2 + STA,
+  TYA,
+0= END,
+INX, INX, ( Do a DROP)
+NEXT JMP,
+
+: UM* ( n1 n2 — d) M* DABS ;
+
+(n2 - remainder n3 - quotient)
+: UM/MOD ( d1 n1 — n2 n3) SM/REM
+  ABS ;
+
+( Integer exponent)
+: IEXP ( n n — n) DUP
+  0 = IF 2DROP 1
+  ELSE DUP
+  1 = IF DROP
+  ELSE SWAP DUP ROT
+  1 DO OVER * LOOP
+  SWAP DROP
+  THEN THEN ;
+
+( Does reverse of ROT)
+: 1-2SWAP ROT ROT ;
+
+( Following words used by >NUMBER)
+
+( Counts num. digits in n-length str.
+( Leaves addr. and count on stack
+: DIGCOUNT ( addr n — addr n) 0.
+  ROT SWAP DO
+  SWAP DUP I + C@ BASE @ DIGIT
+  IF DROP SWAP 1+
+  ELSE SWAP LEAVE THEN
+  LOOP ;
+
+: >SVSTRLEN 1-2SWAP >R >R 1-2SWAP
+  R> R> ;
+
+: >SVNUMLENEXP 2SWAP >R >R 2SWAP
+  ROT R> R> ;
+
+: >SVEXP 1-2SWAP >R >R SWAP R> R>
+  ;
+
+: >ADDACCUM 1-2SWAP >R >R M+ R> R>
+ ;
+
+: >DUPNUMLEN >R ROT DUP R> ;
+
+: >ROTSTRLEN >R >R ROT R> R> ;
+
+: >END SWAP DROP >DUPNUMLEN +
+  >ROTSTRLEN 1-2SWAP - ;
+
+: >NUMBER ( ud1 c­addr1 u1 — ­­ud2
+  c­addr2 u2 )
+  DUP >SVSTRLEN DIGCOUNT
+  DUP DUP >SVNUMLENEXP
+  0 DO DUP I + C@ BASE @ DIGIT
+  DROP
+  ROT 1- DUP >SVEXP BASE @ SWAP
+  IEXP * >ADDACCUM
+  LOOP >END ;
+
+( Copies third value from return stack)
+: J ( -n) R> R> R> R> DUP >R SWAP
+  >R SWAP >R SWAP >R ;
+
+( Decrements DO-loop idx)
+: DO-1 COMPILE R> COMPILE 1-
+  COMPILE >R ; IMMEDIATE
+
+( Following words used by ACCEPT)
+
+( "Add char")
+: ACACH ( n-) >R ROT 1+ 1-2SWAP
+  DUP EMIT
+  SWAP 2DUP R> + C! SWAP DROP ;
+
+( "Bk. sp.")
+: ACBS ( -n) >R ROT 1- 1-2SWAP EMIT
+  DUP R> 1- + 0 SWAP C! ;
+
+( Ignores arrow keys, respects Bk. sp.)
+: ACCEPT ( c-addr u1-u2)
+  0 1-2SWAP 0 DO KEY
+  DUP DUP
+  28 < SWAP 31 > OR IF
+  DUP 155 = IF DROP LEAVE
+  ELSE DUP 126 <> IF I ACACH
+  ELSE I 0> IF I ACBS R> 2 - >R
+  ELSE DO-1 DROP
+  THEN THEN THEN
+  ELSE DO-1 DROP
+  THEN
+  LOOP DROP ;
