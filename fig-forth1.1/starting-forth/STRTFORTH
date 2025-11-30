@@ -10,6 +10,16 @@
 
 : CREATE <BUILDS DOES> ;
 
+( Does left-shift, mult.
+  by 2)
+CODE 2* ( n-n) 0 ,X ASL,
+1 ,X ROL, NEXT JMP,
+
+( Does right-shift, div.
+  by 2)
+CODE 2/ ( n-n) 1 ,X LSR,
+0 ,X ROR, NEXT JMP,
+
 53770 @ VARIABLE RND
 : RANDOM ( -n) RND @ 31421 *
   6972 + DUP RND ! ;
