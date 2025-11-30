@@ -60,6 +60,6 @@ Most of the arithmetic operators were pretty easy to convert from what APX uses 
 just a matter of renaming M/, since it does the same thing! M*/ was the most challenging, since APX didn't have anything like it, nor, it seemed,
 anything I could use to make the needed result. So, I wrote it from scratch using the assembler.
 
-A testimony to how well-organized the Forth standard is was FM/MOD. I wasn't able to figure out on my own how to implement it, but
+A testament to how well-organized the Forth standard is was FM/MOD. I wasn't able to figure out on my own how to implement it, but
 forth-standard.org solved that for me, by having a definition written in Forth that was easy to bring over to APX. Very nice. I forget if I
 consulted it for a definition for M*/, but oh well. I've tested my version, and it works.
