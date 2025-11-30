@@ -1,4 +1,4 @@
-## Starting Forth upgrades
+# *"Starting Forth"* upgrades
 These are some words I wrote to make APX Forth "work better" with the First Edition of the book ["Starting Forth"](https://www.forth.com/starting-forth/).
 I've written them to conform to the inputs and/or outputs that the book specifies.
 
@@ -15,10 +15,10 @@ I've written them to conform to the inputs and/or outputs that the book specifie
 - ACCEPT
 
 RANDOM is similar to the RANDOM word that's used in the book. It does not use the same algorithm as RND() that you find in Basic. (If you want a
-word that works like RND() from Basic, see my [FP Library](https://github.com/marktmiller/atari-8-bit-forth-projects/tree/main/fig-forth1.1/FP%20library)\).
+word that works like RND() from Basic, see my [FP Library](https://github.com/marktmiller/atari-8-bit-forth-projects/tree/main/fig-forth1.1/FP%20library).)
 
 I wrote ACCEPT to be a "simple" form of line input (analogous to INPUT in Basic), in that it does not allow you to use arrow keys, just the
-alphanumeric keys (plus spaces, tabs), and Backspace. Though, I didn't think about most of the other editing keys, like "clear line," "delete
+alphanumeric keys (plus spaces and tabs), and Backspace. Though, I didn't think about most of the other editing keys, like "clear line," "delete
 character." Hmm. I guess it needs more work...
 
 This set of words doesn't make APX completely compatible with "Starting Forth," but it helps.
@@ -51,7 +51,7 @@ the address of the input string on the stack.
 "Starting Forth" says that NUMBER just pushes the converted number on the stack. The APX version of NUMBER pushes two values on the stack:
 the converted number, and then it pushes 0. I'm not sure what the 0 represents.
 
-### Some notes
+## Some notes
 
 APX Forth has a version of CREATE, but I found it difficult to use. So, I created my own that I found makes more sense. I suspect others, except
 maybe more experienced Forth programmers, will agree.
