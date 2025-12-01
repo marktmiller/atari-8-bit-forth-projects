@@ -20,7 +20,7 @@ CODE 2* ( n-n) 0 ,X ASL,
 CODE 2/ ( n-n) 1 ,X LSR,
 0 ,X ROR, NEXT JMP,
 
-53770 @ VARIABLE RND
+53770 @ VARIABLE RND !
 : RANDOM ( -n) RND @ 31421 *
   6972 + DUP RND ! ;
 
