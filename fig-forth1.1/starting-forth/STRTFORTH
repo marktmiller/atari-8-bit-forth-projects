@@ -1,4 +1,4 @@
-( APX Forth "upgrades" for "Starting Forth")
+( "Upgrades" APX Forth to "Starting Forth")
 
 : NOT ( fl-fl) 0 = ;
 : R@ ( -n) I ;
@@ -10,13 +10,9 @@
 
 : CREATE <BUILDS DOES> ;
 
-( Does left-shift, mult.
-  by 2)
-CODE 2* ( n-n) 0 ,X ASL,
-1 ,X ROL, NEXT JMP,
+CODE 2* 0 ,X ASL, 1 ,X ROL,
+NEXT JMP,
 
-( Does right-shift, div.
-  by 2)
 CODE 2/ ( n-n) 1 ,X LSR,
 0 ,X ROR, NEXT JMP,
 
@@ -43,76 +39,72 @@ CODE 2/ ( n-n) 1 ,X LSR,
   AND IF 1- SWAP R> + SWAP ELSE
   R> DROP THEN ;
 
+( Adapted from mult. & div.)
+( algs. in "The Atari)
+( Assembler" by Inman)
 ( Layout in N storage area:
 (   Divisor (2 bytes) N0,N1
 (   Multiplier (2 bytes) N2,N3
 (   Multiplicand (4 bytes) N4-N7
 ( Push: divisor multiplier multiplicand
 ( Result: Dividend
-CODE M*/ ( d n1 n2 — d) 4 # LDA,
-SETUP JSR, ( Copy 8 bytes from stack to N memory area)
-0 # LDA, 3 # LDY, ( Add 3 stack entries = 6 bytes)
+CODE M*/ ( d n1 n2 — d)
+( Copy 8 bytes from stack to N mem. area)
+4 # LDA, SETUP JSR,
+( Add 3 stack entries = 6 bytes)
+0 # LDA, 3 # LDY,
 BEGIN,
-  DEX, DEX,
-  0 ,X STA, 1 ,X STA,
+  DEX, DEX, 0 ,X STA, 1 ,X STA,
   DEY,
 0= END,
 ( Multiply)
-16 # LDY,
-( Manipulate stack
-BEGIN,
-  4 ,X ASL, ( Shift)
-  5 ,X ROL, ( multiplicand)
-  2 ,X ROL, ( left.)
-  3 ,X ROL, ( ***)
-  0 ,X ROL, ( Rotate-left)
-  1 ,X ROL, ( high-word of product.)
+16 # LDY, BEGIN,
+  4 ,X ASL, ( Shift dbl-prec. product)
+  5 ,X ROL, ( left)
+  2 ,X ROL, 3 ,X ROL,
+  0 ,X ROL, ( Rotate-left hi-word)
+  1 ,X ROL, ( of product.)
   N 2 + ASL,  ( Shift multiplier)
   N 3 + ROL, ( left - in N)
-  IFCS,           ( If high-bit went to Carry)
-    CLC, ( Add from N to stack)
+  IFCS,  ( If high-bit went to Carry)
+    CLC,
+    ( Add multiplicand in N to product)
     4 ,X LDA, N 6 + ADC, 4 ,X STA,
     5 ,X LDA, N 7 + ADC, 5 ,X STA,
     2 ,X LDA, N 4 + ADC, 2 ,X STA,
     3 ,X LDA, N 5 + ADC, 3 ,X STA,
-    IFCS,         ( If addition exceeds multiplicand,)
-      0 ,X INC,  ( Increment high-word of product)
+    ( If addition causes dbl-prec.)
+    ( product to carry)
+    IFCS,
+      ( Inc. hi-word of product)
+      0 ,X INC,
     ENDIF,
   ENDIF,
-  DEY,
-0= END,
+  DEY, 0= END,
 ( Divide)
 N 2 + STY,
-32 # LDY,
-BEGIN,
+32 # LDY, BEGIN,
   4 ,X ASL,
   5 ,X ROL, 2 ,X ROL, 3 ,X ROL,
   0 ,X ROL, 1 ,X ROL,
-  1 ,X LDA,
-  N 1 + CMP,
+  1 ,X LDA, N 1 + CMP,
   IFEQ,
-    0 ,X LDA,
-    N CMP,
+    0 ,X LDA, N CMP,
   ENDIF,
   IFCC,
     1 # LDA, N 2 + STA,
   ENDIF,
   N 2 + LDA,
   IFEQ,
-    0 ,X LDA,
-    SEC,
-    N SBC, 0 ,X STA,
-    1 ,X LDA,
-    N 1 + SBC, 1 ,X STA,
-    CLC,
-    4 ,X INC,
+    0 ,X LDA, SEC, N SBC, 0 ,X STA,
+    1 ,X LDA, N 1 + SBC, 1 ,X STA,
+    CLC, 4 ,X INC,
   ENDIF,
   DEY,
   0 # LDA, N 2 + STA,
   TYA,
 0= END,
-INX, INX, ( Do a DROP)
-NEXT JMP,
+INX, INX, NEXT JMP,
 
 : UM* ( n1 n2 — d) M* DABS ;
 
@@ -135,8 +127,8 @@ NEXT JMP,
 
 ( Following words used by >NUMBER)
 
-( Counts num. digits in n-length str.
-( Leaves addr. and count on stack
+( Counts # digits in n-len. str.)
+( Leaves caddr. and cnt. on stack)
 : DIGCOUNT ( addr n — addr n) 0.
   ROT SWAP DO
   SWAP DUP I + C@ BASE @ DIGIT
@@ -144,28 +136,28 @@ NEXT JMP,
   ELSE SWAP LEAVE THEN
   LOOP ;
 
-: >SVSTRLEN 1-2SWAP >R >R 1-2SWAP
-  R> R> ;
+: >SVSTRLEN 1-2SWAP >R >R
+  1-2SWAP R> R> ;
 
 : >SVNUMLENEXP 2SWAP >R >R 2SWAP
   ROT R> R> ;
 
-: >SVEXP 1-2SWAP >R >R SWAP R> R>
-  ;
+: >SVEXP 1-2SWAP >R >R SWAP R>
+  R> ;
 
-: >ADDACCUM 1-2SWAP >R >R M+ R> R>
- ;
+: >ADDACCUM 1-2SWAP >R >R M+ R>
+  R> ;
 
 : >DUPNUMLEN >R ROT DUP R> ;
 
+  ( Bring up str. len.)
 : >ROTSTRLEN >R >R ROT R> R> ;
 
 : >END SWAP DROP >DUPNUMLEN +
   >ROTSTRLEN 1-2SWAP - ;
 
-: >NUMBER ( ud1 c­addr1 u1 — ­­ud2
-  c­addr2 u2 )
-  DUP >SVSTRLEN DIGCOUNT
+( ud1 c­addr1 u1 — ­­ud2 c­addr2 u2 )
+: >NUMBER DUP >SVSTRLEN DIGCOUNT
   DUP DUP >SVNUMLENEXP
   0 DO DUP I + C@ BASE @ DIGIT
   DROP
@@ -184,13 +176,13 @@ NEXT JMP,
 ( Following words used by ACCEPT)
 
 ( "Add char")
-: ACACH ( n-) >R ROT 1+ 1-2SWAP
-  DUP EMIT
+: ACACH ( n-) >R ROT 1+ 1-2SWAP DUP
+  EMIT
   SWAP 2DUP R> + C! SWAP DROP ;
 
 ( "Bk. sp.")
-: ACBS ( -n) >R ROT 1- 1-2SWAP EMIT
-  DUP R> 1- + 0 SWAP C! ;
+: ACBS ( -n) >R ROT 1- 1-2SWAP EMIT DUP
+  R> 1- + 0 SWAP C! ;
 
 ( Ignores arrow keys, respects Bk. sp.)
 : ACCEPT ( c-addr u1-u2)
