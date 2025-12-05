@@ -57,9 +57,4 @@ the converted number, and then it pushes 0. I'm not sure what the 0 represents.
 
 ## Some notes
 
-APX Forth has a version of CREATE, but I found it difficult to use. So, I created my own that I found makes more sense. I suspect others, except
-maybe more experienced Forth programmers, will agree.
-
-A testament to how well-organized the Forth standard is was FM/MOD. I wasn't able to figure out on my own how to implement it, but
-forth-standard.org solved that for me, by having a definition written in Forth that was easy to bring over to APX. Very nice. I forget if I
-consulted it for a definition for M*/, but oh well. I've tested my version, and it works.
+APX Forth has a version of CREATE, but I found it difficult to use. So, I created my own that I found makes more sense.
