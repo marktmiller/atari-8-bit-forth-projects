@@ -25,6 +25,25 @@ I wrote ACCEPT to be a "simple" form of line input (analogous to INPUT in Basic)
 alphanumeric keys (plus spaces and tabs), and Backspace. Though, I didn't think about most of the other editing keys, like "clear line," "delete
 character." Hmm. I guess it needs more work...
 
+The J word does the functional equivalent of the J word described in _"Starting Forth"_, but it works with how Fig-Forth does DO-loops. The point
+of J is to help you deal with nested DO-loops. It accesses an index from a DO-loop at the next higher level. Think of constructions like this in
+Basic, or some other language:
+
+`for j=1 to 10`
+`  for i=1 to 5`
+`  ...`
+`  next i`
+`next j`
+
+The I word accesses the inner-loop index. The J word accesses the next, outer index.
+
+I don't know why, but the Forth described in the book stores two values on the return stack for every DO-loop currently executing, but Fig-Forth
+stores three, which seems like a waste, because all it needs is the "stop" value at the end of the loop, and the current index. So, this version
+of J has to go down to the fourth value in the return stack to get the outer index.
+
+Like with the I word, which copies the top value on the return stack, J can be used outside of DO-loops for making copies of the fourth value
+on the return stack.
+
 This set of words doesn't make APX completely compatible with "Starting Forth," but it helps.
 
 Some exceptions remain:
