@@ -165,7 +165,7 @@ INX, INX, NEXT JMP,
   IEXP * >ADDACCUM
   LOOP >END ;
 
-( Copies third value from return stack)
+( Copies fourth value from return stack)
 : J ( -n) R> R> R> R> DUP >R SWAP
   >R SWAP >R SWAP >R ;
 
