@@ -46,9 +46,9 @@ CODE 2/ ( n-n) 1 ,X LSR,
 (   Divisor (2 bytes) N0,N1
 (   Multiplier (2 bytes) N2,N3
 (   Multiplicand (4 bytes) N4-N7
-( Push: divisor multiplier multiplicand
+( Push: multiplier [double] multiplicand [single] divisor [single]
 ( Result: Dividend
-CODE M*/ ( d n1 n2 — d)
+CODE M*/ ( d1 n2 n3 — d)
 ( Copy 8 bytes from stack to N mem. area)
 4 # LDA, SETUP JSR,
 ( Add 3 stack entries = 6 bytes)
@@ -108,9 +108,35 @@ INX, INX, NEXT JMP,
 
 : UM* ( n1 n2 — d) M* DABS ;
 
-(n2 - remainder n3 - quotient)
-: UM/MOD ( d1 n1 — n2 n3) SM/REM
-  ABS ;
+( UM/MOD by Garth Wilson)
+( http://6502.org/source/integers/ummodfix/ummodfix.htm)
+HEX
+0 VARIABLE CARRY
+(uq=unsigned quotiet, ur=unsigned remainder)
+( ud1 u2-uq ur)
+CODE UM/MOD SEC, 2 ,X LDA,
+0 ,X SBC,
+3 ,X LDA, 1 ,X SBC,
+IFCS, INX, INX, FF # LDA,
+0 ,X STA, 1 ,X STA,
+2 ,X STA, 3 ,X STA, NEXT JMP,
+ENDIF,
+11 # LDY, BEGIN,
+4 ,X ROL, 5 ,X ROL,
+2 ,X ROL, 3 ,X ROL,
+DEY, IFEQ, INX, INX, NEXT JMP,
+ENDIF,
+0 # LDA,
+CARRY STA, CARRY ROL,
+SEC, 2 ,X LDA, 0 ,X SBC, N STA,
+3 ,X LDA, 1 ,X SBC, N 1+ STA,
+CARRY LDA, 0 # SBC,
+IFCS, N LDA, 2 ,X STA,
+N 1+ LDA, 3 ,X STA,
+ENDIF,
+1 # LDA,
+0= END, INX, INX, NEXT JMP,
+DECIMAL
 
 ( Integer exponent)
 : IEXP ( n n — n) DUP
