@@ -107,6 +107,11 @@ N 2 + STY,
 0= END,
 INX, INX, NEXT JMP,
 
+( Unsigned equivalent of D.
+  Prints unsigned)
+( double-length number, with space)
+: UD. ( ud-) <# #S #> TYPE SPACE ;
+
 : UM* ( n1 n2 — d) M* DABS ;
 
 ( UM/MOD by Garth Wilson)
