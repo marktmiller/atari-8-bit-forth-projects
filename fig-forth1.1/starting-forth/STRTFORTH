@@ -29,7 +29,8 @@ CODE 2/ ( n-n) 1 ,X LSR,
 
 : SM/REM ( d1 n1 — n2 n3) M/ ;
 
-(FM/MOD definition using SM/REM. Adapted from forth-standard.org)
+( FM/MOD by NieDzejkob)
+( https://forth-standard.org/standard/core/FMDivMOD)
 (n2 - remainder, n3 - floored quotient)
 : FM/MOD ( d1 n1 — n2 n3)
   DUP >R SM/REM
