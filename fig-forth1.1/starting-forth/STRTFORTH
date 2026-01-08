@@ -112,7 +112,26 @@ INX, INX, NEXT JMP,
 ( double-length number, with space)
 : UD. ( ud-) <# #S #> TYPE SPACE ;
 
-: UM* ( n1 n2 — d) M* DABS ;
+HEX
+( UM* by Garth Wilson)
+( http://forum.6502.org/viewtopic.php?f=9&t=689)
+( u1 u2-ud)
+CODE UM* 2 ,X LDA, N STA,
+0 # LDA, 2 ,X STA,
+3 ,X LDA, N 1+ STA,
+0 # LDA, 3 ,X STA,
+10 # LDY, BEGIN,
+2 ,X ASL, 3 ,X ROL,
+0 ,X ROL, 1 ,X ROL,
+IFCS, CLC,
+N LDA, 2 ,X ADC, 2 ,X STA,
+N 1+ LDA, 3 ,X ADC, 3 ,X STA,
+IFCS, 0 ,X INC,
+IFEQ, 1 ,X INC, ENDIF,
+ENDIF, ENDIF,
+DEY,
+0= END, NEXT JMP,
+DECIMAL
 
 ( UM/MOD by Garth Wilson)
 ( http://6502.org/source/integers/ummodfix/ummodfix.htm)
