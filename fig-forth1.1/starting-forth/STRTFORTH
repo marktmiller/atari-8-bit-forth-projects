@@ -25,6 +25,9 @@ CODE 2/ ( n-n) 1 ,X LSR,
   I + C@ ROT DUP >R I + C! R>
   -1 +LOOP 2DROP ;
 
+( Does reverse of ROT)
+: 1-2SWAP ROT ROT ;
+
 : M+ ( d n — d-sum) S->D D+ ;
 
 : SM/REM ( d1 n1 — n2 n3) M/ ;
@@ -49,7 +52,7 @@ CODE 2/ ( n-n) 1 ,X LSR,
 (   Multiplicand (4 bytes) N4-N7
 ( Push: multiplier [double] multiplicand [single] divisor [single]
 ( Result: Dividend
-CODE M*/ ( d1 n2 n3 — d)
+CODE M*/SUB ( d1 n2 n3 — d2)
 ( Copy 8 bytes from stack to N mem. area)
 4 # LDA, SETUP JSR,
 ( Add 3 stack entries = 6 bytes)
@@ -107,10 +110,30 @@ N 2 + STY,
 0= END,
 INX, INX, NEXT JMP,
 
-( Unsigned equivalent of D.
-  Prints unsigned)
-( double-length number, with space)
+( Unsigned equivalent of D.)
+( Prints unsigned double-length)
+( number, with space)
 : UD. ( ud-) <# #S #> TYPE SPACE ;
+
+: NEGATE ( n-'n) MINUS ;
+: DNEGATE ( d-'d) DMINUS ;
+
+: D= ( d1d2-fl) SWAP >R =
+  R> ROT = AND ;
+: D0= ( d1d2-fl) NOT SWAP NOT AND ;
+: D- ( d1d2-d3) DNEGATE D+ ;
+: DNEG? ( d1-fl) 0< SWAP DROP ;
+: D< ( d1d2-fl) D- DNEG? ;
+
+: M*/ ( d1 n1 n2 — d2) 0 SWAP
+  DUP 0< IF ABS SWAP 1 XOR SWAP
+  THEN >R SWAP
+  DUP 0< IF ABS SWAP 1 XOR SWAP
+  THEN >R 1-2SWAP
+  DUP 0< IF DABS ROT 1 XOR
+  1-2SWAP THEN
+  R> R> M*/SUB
+  ROT IF DNEGATE THEN ;
 
 HEX
 ( UM* by Garth Wilson)
@@ -135,6 +158,7 @@ DECIMAL
 
 ( UM/MOD by Garth Wilson)
 ( http://6502.org/source/integers/ummodfix/ummodfix.htm)
+( Signals overflow with result: -1 [quotient] -1 [remainder])
 HEX
 0 VARIABLE CARRY
 (uq=unsigned quotiet, ur=unsigned remainder)
@@ -173,9 +197,6 @@ DECIMAL
   SWAP DROP
   THEN THEN ;
 
-( Does reverse of ROT)
-: 1-2SWAP ROT ROT ;
-
 ( Following words used by >NUMBER)
 
 ( Counts # digits in n-len. str.)
@@ -189,21 +210,15 @@ DECIMAL
 
 : >SVSTRLEN 1-2SWAP >R >R
   1-2SWAP R> R> ;
-
 : >SVNUMLENEXP 2SWAP >R >R 2SWAP
   ROT R> R> ;
-
 : >SVEXP 1-2SWAP >R >R SWAP R>
   R> ;
-
 : >ADDACCUM 1-2SWAP >R >R M+ R>
   R> ;
-
 : >DUPNUMLEN >R ROT DUP R> ;
-
   ( Bring up str. len.)
 : >ROTSTRLEN >R >R ROT R> R> ;
-
 : >END SWAP DROP >DUPNUMLEN +
   >ROTSTRLEN 1-2SWAP - ;
 
@@ -230,7 +245,6 @@ DECIMAL
 : ACACH ( n-) >R ROT 1+ 1-2SWAP DUP
   EMIT
   SWAP 2DUP R> + C! SWAP DROP ;
-
 ( "Bk. sp.")
 : ACBS ( -n) >R ROT 1- 1-2SWAP EMIT DUP
   R> 1- + 0 SWAP C! ;
