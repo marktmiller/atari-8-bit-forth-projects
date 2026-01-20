@@ -32,6 +32,8 @@ bootable APX Forth disk. Once you have booted into Forth, mount this disk image 
 mounted the disk image in Drive 2, you will need to execute the command `DR1` before the LOAD command (to get Forth back to Drive 1
 after the load, execute `DR0`).
 
+To download the image, click on the .atr file in this repository, and then click the "Raw" button. This will automatically download it.
+
 RANDOM is similar to the RANDOM word that's used in the book. It does not use the same algorithm as RND() that you find
 in Basic. (If you want a word that works like RND() from Basic, see my [FP Library](https://github.com/marktmiller/atari-8-bit-forth-projects/tree/main/fig-forth1.1/FP%20library).)
 
