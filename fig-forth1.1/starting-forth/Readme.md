@@ -27,6 +27,11 @@ see what they do.
 - J
 - ACCEPT
 
+I've included a disk image called StartingForth.atr that contains the complete source code for this library. You will need a separate,
+bootable APX Forth disk. Once you have booted into Forth, mount this disk image in one of the drives, and execute: `1 LOAD`. If you've
+mounted the disk image in Drive 2, you will need to execute the command `DR1` before the LOAD command (to get Forth back to Drive 1
+after the load, execute `DR0`).
+
 RANDOM is similar to the RANDOM word that's used in the book. It does not use the same algorithm as RND() that you find
 in Basic. (If you want a word that works like RND() from Basic, see my [FP Library](https://github.com/marktmiller/atari-8-bit-forth-projects/tree/main/fig-forth1.1/FP%20library).)
 
