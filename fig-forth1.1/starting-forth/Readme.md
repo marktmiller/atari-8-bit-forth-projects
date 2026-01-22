@@ -119,5 +119,5 @@ DO-1 is useful for temporarily suspending the advance of I in DO-loops.
 
 APX Forth has a version of CREATE, but I found it difficult to use. So, I created my own that I found makes more sense.
 
-UM/MOD has detection for overflow (whether the result will be more than 4,294,967,295, the maximum unsigned double-length value). If there is
-overflow, it returns a -1 for the quotient, and -1 for the remainder (65535 unsigned).
+UM/MOD has detection for overflow (whether the quotient will be more than 65535, the maximum unsigned single-length value). If there is
+overflow, it returns 65535 for both the quotient and the remainder.
