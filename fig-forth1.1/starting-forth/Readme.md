@@ -37,6 +37,8 @@ To download the image, click on the .atr file in this repository, and then click
 RANDOM is similar to the RANDOM word that's used in the book. It does not use the same algorithm as RND() that you find
 in Basic. (If you want a word that works like RND() from Basic, see my [FP Library](https://github.com/marktmiller/atari-8-bit-forth-projects/tree/main/fig-forth1.1/FP%20library).)
 
+Re. UM/MOD, see note at bottom.
+
 I wrote ACCEPT to be a "simple" form of line input (analogous to INPUT in Basic), in that it does not allow you to use
 arrow keys, just the alphanumeric keys (plus spaces and tabs), and Backspace. Though, I didn't think about most of the
 other editing keys, like "clear line," "delete character." Hmm. I guess it needs more work...
@@ -116,3 +118,6 @@ DO-1 is useful for temporarily suspending the advance of I in DO-loops.
 ## Some notes
 
 APX Forth has a version of CREATE, but I found it difficult to use. So, I created my own that I found makes more sense.
+
+UM/MOD has detection for overflow (whether the result will be more than 4,294,967,295, the maximum unsigned double-length value). If there is
+overflow, it returns a -1 for the quotient, and -1 for the remainder (65535 unsigned).
