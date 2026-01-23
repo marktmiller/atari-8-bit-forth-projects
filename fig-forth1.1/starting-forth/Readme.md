@@ -134,5 +134,10 @@ since it does that for you. The idea with the trailing blank is this stops NUMBE
 
 APX Forth has a version of CREATE, but I found it difficult to use. So, I created my own that I found makes more sense.
 
-UM/MOD has detection for overflow (whether the quotient will be more than 65535, the maximum unsigned single-length value). If there is
-overflow, it returns 65535 for both the quotient and the remainder.
+From what I've read, the standard reference source code for UM* and UM/MOD in Fig-Forth contain bugs. The version of these words I've
+included with this library are debugged.
+
+There is a word in APX Forth called U* that is based on the buggy version of what's called UM* in "Starting Forth."
+
+The version of UM/MOD included in this library has detection for overflow (whether the quotient will be more than 65535, the maximum
+unsigned single-length value). If there is overflow, it returns 65535 for both the quotient and the remainder.
