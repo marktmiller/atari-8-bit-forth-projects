@@ -96,6 +96,10 @@ need to use HERE to push the address of the input string on the stack.
 "Starting Forth" says that NUMBER just pushes the converted number on the stack. The APX version of NUMBER pushes two
 values on the stack: the converted number, and then it pushes 0. I'm not sure what the 0 represents.
 
+There is a quirk with NUMBER to keep in mind. "Starting Forth" says that NUMBER expects the first byte at the starting address you give it to
+be a count of the number of bytes in the string to convert. NUMBER in APX Forth completely ignores the first byte (I guess expecting it to be
+a length byte), and proceeds with converting the string from the 2nd byte until it finds a non-numeric character.
+
 ## Other routines
 
 To help with the logic in words for this library, or to just be helpful in using them, I created some other words:
@@ -110,10 +114,21 @@ To help with the logic in words for this library, or to just be helpful in using
 | UD. | The double equivalent of "." Prints an unsigned double-length number, with a trailing space |
 | IEXP | Integer exponent. Single-length. (ex: 5 2 IEXP -> 25) |
 | DO-1 | Decrements the local index (referenced with I) for a DO-loop |
+| SCNVN | Converts n bytes at addr to a single-length number |
 
 While ROT does (n1 n2 n3 -> n2 n3 n1), 1-2SWAP does (n1 n2 n3 -> n3 n1 n2).
 
 DO-1 is useful for temporarily suspending the advance of I in DO-loops.
+
+SCNVN is a helper for using NUMBER. I designed SCNVN to be used in conjunction with ACCEPT. To use, first push the count of bytes to convert on
+the stack (ACCEPT does this automatically), and then push the start address.
+
+To account for the quirk I talk about above with NUMBER, a tactic I used was to add 1 to the address I gave to ACCEPT, so the complete
+numeric string would be where NUMBER would expect to find it. NUMBER's behavior also sometimes led to erroneous results. Since it does not take
+a length byte in its input, it only stops converting when it finds a non-numeric character. There were sometimes numeric characters in memory
+after my intended string. SCNVN prevents this by putting a space character after the last character of the string. It also accounts for NUMBER's
+"length byte skip" by adding 1 to the length you give it. So, unlike with ACCEPT, you don't need to add 1 to the address you give to SCNVN,
+since it does that for you. The idea with the trailing blank is this stops NUMBER's conversion after the last character.
 
 ## Some notes
 
