@@ -262,3 +262,7 @@ DECIMAL
   ELSE DO-1 DROP
   THEN
   LOOP DROP ;
+
+( String-Convert-to-Number)
+: SCNVN ( n addr - n) DUP ROT + 1+
+  BL SWAP C! NUMBER ;
