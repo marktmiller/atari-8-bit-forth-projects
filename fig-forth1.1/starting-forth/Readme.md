@@ -1,4 +1,8 @@
 # *"Starting Forth"* upgrades
+
+This library requires the assembler from the APX Forth disk, which starts on Screen 39. Executing `39 LOAD` with the APX Forth disk in your drive
+will load the assembler into your dictionary.
+
 These are some words I wrote, along with adaptations of working routines from other authors, to make
 APX Forth "work better" with the First Edition of the book ["Starting Forth"](https://www.forth.com/starting-forth/).
 I've written my routines to conform to the inputs and/or outputs that the book specifies. You can read in the book to
@@ -137,7 +141,8 @@ APX Forth has a version of CREATE, but I found it difficult to use. So, I create
 From what I've read, the standard reference source code for UM* and UM/MOD in Fig-Forth contain bugs. The version of these words I've
 included with this library are debugged.
 
-There is a word in APX Forth called U* that is based on the buggy version of what's called UM* in "Starting Forth."
+There is a word in APX Forth called U* that is UM* described in "Starting Forth" by another name, but it is based on the buggy reference
+version.
 
 The version of UM/MOD included in this library has detection for overflow (whether the quotient will be more than 65535, the maximum
 unsigned single-length value). If there is overflow, it returns 65535 for both the quotient and the remainder.
