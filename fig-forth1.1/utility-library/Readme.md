@@ -70,7 +70,7 @@ The following three words access screens on disk.
 ### Notes
 The TIME word accesses memory locations 18, 19, and 20 (decimal), and calculates the time value.
 
-Re. the POS word - The text cursor on the Atari normally does not move after a call to POS, until you print text. PLCUR will move the cursor
+Re. the PLCUR word - The text cursor on the Atari normally does not move after a call to POS, until you print text. PLCUR will move the cursor
 to the row and column you've set with POS, without printing text.
 
 Re. the SVREG word - Normal Forth pointer dereferencing has you using the following syntax: `5 PTR !` - to store 5 at pointer PTR.
