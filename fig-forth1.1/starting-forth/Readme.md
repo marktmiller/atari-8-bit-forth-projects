@@ -107,8 +107,7 @@ The book says that WORD puts the address of the string it's processed on the sta
 use HERE to push the address of the string processed by WORD on the stack.
 
 The book says that NUMBER just pushes the converted number on the stack. The APX version of NUMBER pushes two values on the stack: the
-converted number, and then a 0. I'm sure this extra value is there for some legitimate reason, but since I use NUMBER to convert numeric
-strings to numbers, it seems extraneous, so I DROP it.
+converted number, and then a sign flag (flag values are: 0 if converted number is positive, -1 if negative).
 
 There is a quirk with NUMBER to keep in mind. The book says that NUMBER expects the first byte at the address you give it is the byte count
 for the string that follows. NUMBER in APX Forth completely ignores the first byte (I guess expecting it to be a length byte), and proceeds
@@ -163,4 +162,4 @@ ok
 PAD SCNVN DROP . 1234
 ok
 ```
-(I use DROP to get rid of the "0" left by NUMBER. See note above.)
+(I DROP'ed the sign flag left by NUMBER. See note above.)
