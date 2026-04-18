@@ -13,6 +13,9 @@ The following instructions executed with the APX Forth disk in your drive load t
 60 LOAD
 ```
 
+I've included a disk image that contains the code for this library. To use it, you need to boot with a Forth language disk.
+You can then load this library mounting Utility library.atr, and using the expression `1 LOAD`.
+
 Words in this library:
 
 | Word | Description |
