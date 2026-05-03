@@ -27,6 +27,7 @@ Words in this library:
 | VAR | Alias for VARIABLE |
 | CONST | Alias for CONSTANT |
 | 1- | Decrements number at top of stack |
+| FACT | Integer factorial |
 | ISQR | Integer square (n x n) |
 | INC | Increments 16-bit value at address |
 | DEC | Decrements 16-bit value at address |
