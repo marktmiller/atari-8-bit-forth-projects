@@ -4,6 +4,8 @@ from Thom Cherryhomes's series on APX Forth on the Atari, extending to more adva
 Forth disk I used for the slides here. Some of the screens contain in-screen demonstrations of code for the course, which can
 be LOADed right off the screens, and run.
 
+The slide set starts on Screen 16 (get to it with `16 LIST`), and goes through Screen 77.
+
 I used a little Forth code to run the "slide show." It's on Screen 78.
 If you want to use it, you'll need to use `78 LOAD`, and then invoke the vocabulary for it with the word SLIDES.
 
